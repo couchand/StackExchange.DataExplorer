@@ -174,6 +174,7 @@ namespace StackExchange.DataExplorer.Controllers
 
             ViewData["QueryVoting"] = voting;
             ViewData["query_action"] = "run/" + Site.Id + "/" + revision.QuerySet.Id + "/" + revision.Id;
+            ViewData["cache_clear"] = "clear/" + Site.Id + "/" + revision.QuerySet.Id + "/" + revision.Id;
 
             if (cachedResults != null)
             {

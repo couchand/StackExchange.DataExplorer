@@ -991,7 +991,7 @@ ul.linkbar li {
   margin-bottom: 5px;  
 }
 
-#query-results .subheader .group, #execution-stats {
+#query-results .subheader .group, #execution-info {
   width: 980px;
   margin: 0px auto 0px auto;
 }
@@ -1004,7 +1004,7 @@ ul.linkbar li {
   display: none;
 }
 
-#execution-stats {
+#execution-info {
   color: #606060;
   font-weight: bold;
   padding: 10px 0px 6px 0px;

@@ -364,6 +364,54 @@ select @newId, RevisionId from QuerySetRevisions where QuerySetId = @oldId", new
         }
 
 
+        [HttpPost]
+        [StackRoute(@"query/clear-cache/{siteId:\d+}/{querySetId:\d+}/{revisionId:\d+}")]
+        public ActionResult ClearCache(int querySetId, int revisionId, int siteId)
+        {
+            if (CurrentUser.IsAnonymous && !CaptchaController.CaptchaPassed(GetRemoteIP()))
+            {
+                return Json(new { captcha = true });
+            }
+
+            ActionResult response = null;
+            try
+            {
+                QuerySet querySet = null;
+
+                querySet = Current.DB.QuerySets.Get(querySetId);
+
+                if (querySet == null)
+                {
+                    throw new ApplicationException("Invalid query set ID");
+                }
+
+                Revision revision = Current.DB.Revisions.Get(revisionId);
+                if (revision == null)
+                {
+                    throw new ApplicationException("Invalid revision ID");
+                }
+
+                Query query = Current.DB.Queries.Get(revision.QueryId);
+
+                var parsedQuery = new ParsedQuery(
+                    query.QueryBody,
+                    Request.Params,
+                    withExecutionPlan == true,
+                    targetSites ?? TargetSites.Current
+                );
+
+                QueryUtil.ClearCachedResults(parsedQuery, siteId);
+
+                response = Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                response = TransformExecutionException(ex);
+            }
+
+            return response;
+        }
+
         [StackRoute(@"{sitename}/csv/{revisionId:\d+}/{slug?}", RoutePriority.Low)]
         public ActionResult ShowSingleSiteCsv(string sitename, int revisionId, string slug)
         {

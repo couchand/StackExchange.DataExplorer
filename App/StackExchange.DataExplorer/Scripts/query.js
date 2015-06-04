@@ -401,8 +401,33 @@ DataExplorer.ready(function () {
         DataExplorer.template('#execution-stats', 'text', {
             'records': textOnly ? "Results" : records + " rows",
             'time': response.executionTime === 0 ? "<1" : response.executionTime,
+        });
+
+        DataExplorer.template('#cache-info', 'text', {
             'cached': response.fromCache ? ' (cached)' : ''
         });
+
+        if (response.fromCache) {
+            $('#clearCacheForm').submit(function () {
+                $.ajax({
+                    'type': 'POST',
+                    'url': this.action,
+                    'success': function (response) {
+                        DataExplorer.template('#cache-info', 'text', {
+                            'cached': ''
+                        });
+                    },
+                    'error': function() {
+                        showError({ 'error': "Something unexpected went wrong while running "
+                                        + "your query. Don't worry, blame is already being assigned." });
+                    },
+                    'cache': false,
+                });
+                return false;
+            });
+
+            $('#clear-cache').prop('disabled', false);
+        }
 
         var target = "";
         if (response.targetSites == 1) { target = "all-"; } // all sites

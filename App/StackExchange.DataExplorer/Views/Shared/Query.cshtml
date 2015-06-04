@@ -104,7 +104,16 @@
         <pre id="messages" class="panel"><code></code></pre>
         <div id="executionPlan" class="panel"></div>
         <div id="graph" class="panel"></div>
-        <div id="execution-stats">:records returned in :time ms:cached</div>
+        <div id="execution-info">
+            <span class="execution-stats">:records returned in :time ms</span>
+            <span class="cache-info">:cached</span>
+            @if (AppSettings.EnableClearCache)
+            {
+            <form id="clearCacheForm" action="/query/@ViewData["cache_clear"]" method='post'>
+                <button id="clear-cache" class="btn-normal" type="button" disabled>Clear Cache</button>
+            </form>
+            }
+        </div>
     </div>
 </div>
 @Scripts.Render("~/assets/js/query")
